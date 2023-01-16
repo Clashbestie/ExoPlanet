@@ -1,8 +1,9 @@
 package planet;
 
-import Position.Position;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
+import position.Position;
 
 import java.io.*;
 import java.net.Socket;
@@ -69,6 +70,16 @@ public class Exoplanet implements Runnable
         write("{\"CMD\":\"exit\"}");
     }
 
+    public void c2sGetPos()
+    {
+        write("{\"CMD\":\"getpos\"}");
+    }
+
+    public void c2sCharge(int duration)
+    {
+        write("{\"CMD\":\"charge\",\"DURATION\":\"" + duration + "\"}");
+    }
+
     private void write(String data)
     {
         try
@@ -94,20 +105,24 @@ public class Exoplanet implements Runnable
                 command = reader.readLine();
                 if (command != null) System.out.println("Read-> " + command);
 
-                HashMap data = gson.fromJson(command, HashMap.class);
+                HashMap<?, ?> data = gson.fromJson(command, HashMap.class);
 
                 switch (getType(data))
                 {
                     case INIT:
+                        int width = ((Double) ((LinkedTreeMap<?,?>)data.get("SIZE")).get("WIDTH")).intValue();
+                        int height = ((Double) ((LinkedTreeMap<?,?>)data.get("SIZE")).get("HEIGHT")).intValue();
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cInit(data);
+                            listener.s2cInit(width, height);
                         }
                         break;
                     case LANDED:
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cLanded(data);
+                            Ground ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
+                            double temp = Double.parseDouble(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP").toString());
+                            listener.s2cLanded(ground, temp);
                         }
                         break;
                     case SCANED:
@@ -169,7 +184,7 @@ public class Exoplanet implements Runnable
         }
     }
 
-    private ServerCommandType getType(HashMap data)
+    private ServerCommandType getType(HashMap<?, ?> data)
     {
         if (data == null || !data.containsKey("CMD")) return ServerCommandType.UNKNOWN;
         try

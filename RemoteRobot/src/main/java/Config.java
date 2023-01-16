@@ -25,7 +25,8 @@ public class Config
         return x != null && Boolean.parseBoolean(x);
     }
 
-    private static void initDefaults(){
+    private static void initDefaults()
+    {
 
     }
 

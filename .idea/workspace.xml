@@ -4,28 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7030390d-d3dc-4fa1-a176-7d9c847fc0cc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/Config.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/Position/Direction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/Position/Position.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/RemoteRobot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Exoplanet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandsListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+    <list default="true" id="7030390d-d3dc-4fa1-a176-7d9c847fc0cc" name="Changes" comment="Initial Commit">
+      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Ground.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/Config.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/Position/Direction.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/position/Direction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/Position/Position.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/position/Position.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/RemoteRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/RemoteRobot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Exoplanet.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Exoplanet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandsListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandsListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +28,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -63,36 +51,13 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.39425287&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="U:\School\ExoPlanet\RemoteRobot\src\main\java" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="ExoPlanet:RemoteRobot [:RemoteRobot:RemoteRobot.main()]" type="GradleRunConfiguration" factoryName="Gradle">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/RemoteRobot" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":RemoteRobot:RemoteRobot.main()" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -103,6 +68,14 @@
       <option name="presentableId" value="Default" />
       <updated>1673721847334</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit">
+      <created>1673877010176</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1673877010176</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -115,5 +88,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
   </component>
 </project>
