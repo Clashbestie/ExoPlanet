@@ -25,7 +25,8 @@ public enum Ground
             fieldName.setAccessible(false);
         } catch (IllegalAccessException | NoSuchFieldException e)
         {
-            if(e.getClass().equals(NoSuchFieldException.class)) System.out.println("MOM! Phineas and Ferb are messing with my ENUMS again!");
+            if (e.getClass().equals(NoSuchFieldException.class))
+                System.out.println("MOM! Phineas and Ferb are messing with my ENUMS again!");
             else System.out.println("PLS GIVE REFLECTION.");
         }
     }

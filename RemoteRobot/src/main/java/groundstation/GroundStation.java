@@ -6,7 +6,8 @@ import position.Position;
 import java.io.*;
 import java.net.Socket;
 
-public class GroundStation implements Runnable{
+public class GroundStation implements Runnable
+{
 
     private final BufferedWriter writer;
     private final BufferedReader reader;
@@ -24,25 +25,32 @@ public class GroundStation implements Runnable{
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public void run() {
-        
+    public void run()
+    {
+
     }
 
-    public void sendPos(Position position){
-        write(Exoplanet.gson().toJson(position));
+    public void sendPos(Position position)
+    {
+        write("{\"CMD\":\"updateposition\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}}");
     }
 
-    public void sendDestroy(){
+    public void sendDestroy()
+    {
         write("{\"CMD\":\"destroy\"}");
     }
 
-    private void write(String message){
-        try {
+    private void write(String message)
+    {
+        try
+        {
             writer.write(message);
             writer.newLine();
             writer.flush();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
     }

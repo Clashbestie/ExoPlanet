@@ -10,19 +10,14 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Exoplanet implements Runnable
 {
 
-    private static Gson gson;
-
-    public static Gson gson(){
-        return gson;
-    }
-    private final BufferedWriter writer;
-    private final BufferedReader reader;
-    private final ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
+    private Gson gson;
+    private BufferedWriter writer;
+    private BufferedReader reader;
+    private ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
 
     public Exoplanet()
     {
@@ -49,10 +44,7 @@ public class Exoplanet implements Runnable
 
     public void c2sLand(Position position)
     {
-        Map<String, Object> data = new HashMap<>();
-        data.put("CMD", "land");
-        data.put("POSITION", position);
-        write(gson.toJson(data)); //{"CMD":"land", "POSITION":{"X":0,"Y":0,"DIRECTION":"EAST"}}
+        write("{\"CMD\":\"land\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}}");
     }
 
     public void c2sScan()
@@ -115,35 +107,35 @@ public class Exoplanet implements Runnable
                 switch (getType(data))
                 {
                     case INIT:
-                        int width = ((Double) ((LinkedTreeMap<?,?>)data.get("SIZE")).get("WIDTH")).intValue();
-                        int height = ((Double) ((LinkedTreeMap<?,?>)data.get("SIZE")).get("HEIGHT")).intValue();
+                        int width = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("WIDTH")).intValue();
+                        int height = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("HEIGHT")).intValue();
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cInit(width, height);
                         }
                         break;
                     case LANDED:
-                        Ground ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
-                        double temp = Double.parseDouble(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP").toString());
+                        Ground ground = Ground.valueOf(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("GROUND").toString());
+                        double temp = Double.parseDouble(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP").toString());
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cLanded(ground, temp);
                         }
                         break;
                     case SCANED:
-                        ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
-                        temp = Double.parseDouble((String) ((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP"));
+                        ground = Ground.valueOf(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("GROUND").toString());
+                        temp = Double.parseDouble((String) ((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP"));
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cScanned(ground, temp);
                         }
                         break;
                     case MOVED:
-                        LinkedTreeMap<?,?> _position = (LinkedTreeMap<?, ?>) data.get("POSITION");
+                        LinkedTreeMap<?, ?> _position = (LinkedTreeMap<?, ?>) data.get("POSITION");
                         int x = ((Double) _position.get("X")).intValue();
                         int y = ((Double) _position.get("Y")).intValue();
                         Direction direction = Direction.valueOf(_position.get("DIRECTION").toString());
-                        Position position =new Position(x,y, direction);
+                        Position position = new Position(x, y, direction);
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cMoved(position);
@@ -174,14 +166,14 @@ public class Exoplanet implements Runnable
                         x = ((Double) _position.get("X")).intValue();
                         y = ((Double) _position.get("Y")).intValue();
                         direction = Direction.valueOf(_position.get("DIRECTION").toString());
-                        position =new Position(x,y, direction);
+                        position = new Position(x, y, direction);
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cPos(position);
                         }
                         break;
                     case CHARGED:
-                        LinkedTreeMap<?,?> _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
+                        LinkedTreeMap<?, ?> _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
                         temp = Double.parseDouble((String) _status.get("TEMP"));
                         int energy = ((Double) _status.get("ENERGY")).intValue();
                         text = _status.get("MESSAGE").toString();

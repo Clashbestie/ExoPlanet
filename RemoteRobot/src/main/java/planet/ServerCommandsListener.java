@@ -3,8 +3,6 @@ package planet;
 import position.Direction;
 import position.Position;
 
-import java.util.HashMap;
-
 public interface ServerCommandsListener
 {
     void s2cInit(int width, int height);
