@@ -3,6 +3,7 @@ package planet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import position.Direction;
 import position.Position;
 
 import java.io.*;
@@ -14,7 +15,11 @@ import java.util.Map;
 public class Exoplanet implements Runnable
 {
 
-    private final Gson gson;
+    private static Gson gson;
+
+    public static Gson gson(){
+        return gson;
+    }
     private final BufferedWriter writer;
     private final BufferedReader reader;
     private final ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
@@ -118,59 +123,81 @@ public class Exoplanet implements Runnable
                         }
                         break;
                     case LANDED:
+                        Ground ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
+                        double temp = Double.parseDouble(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP").toString());
                         for (ServerCommandsListener listener : listeners)
                         {
-                            Ground ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
-                            double temp = Double.parseDouble(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP").toString());
                             listener.s2cLanded(ground, temp);
                         }
                         break;
                     case SCANED:
+                        ground = Ground.valueOf(((LinkedTreeMap<?,?>)data.get("MEASURE")).get("GROUND").toString());
+                        temp = Double.parseDouble((String) ((LinkedTreeMap<?,?>)data.get("MEASURE")).get("TEMP"));
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cScanned(data);
+                            listener.s2cScanned(ground, temp);
                         }
                         break;
                     case MOVED:
+                        LinkedTreeMap<?,?> _position = (LinkedTreeMap<?, ?>) data.get("POSITION");
+                        int x = ((Double) _position.get("X")).intValue();
+                        int y = ((Double) _position.get("Y")).intValue();
+                        Direction direction = Direction.valueOf(_position.get("DIRECTION").toString());
+                        Position position =new Position(x,y, direction);
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cMoved(data);
+                            listener.s2cMoved(position);
                         }
                         break;
                     case ROTATED:
+                        direction = Direction.valueOf(data.get("DIRECTION").toString());
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cRotated(data);
+                            listener.s2cRotated(direction);
                         }
                         break;
                     case CRASHED:
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cCrashed(data);
+                            listener.s2cCrashed();
                         }
                         break;
                     case ERROR:
+                        String text = data.get("ERROR").toString();
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cError(data);
+                            listener.s2cError(text);
                         }
                         break;
                     case POS:
+                        _position = (LinkedTreeMap<?, ?>) data.get("POSITION");
+                        x = ((Double) _position.get("X")).intValue();
+                        y = ((Double) _position.get("Y")).intValue();
+                        direction = Direction.valueOf(_position.get("DIRECTION").toString());
+                        position =new Position(x,y, direction);
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cPos(data);
+                            listener.s2cPos(position);
                         }
                         break;
                     case CHARGED:
+                        LinkedTreeMap<?,?> _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
+                        temp = Double.parseDouble((String) _status.get("TEMP"));
+                        int energy = ((Double) _status.get("ENERGY")).intValue();
+                        text = _status.get("MESSAGE").toString();
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cCharged(data);
+                            listener.s2cCharged(temp, energy, text);
                         }
                         break;
                     case STATUS:
+                        _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
+                        temp = Double.parseDouble((String) _status.get("TEMP"));
+                        energy = ((Double) _status.get("ENERGY")).intValue();
+                        text = _status.get("MESSAGE").toString();
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cStatus(data);
+                            listener.s2cStatus(temp, energy, text);
                         }
                         break;
                     case UNKNOWN:

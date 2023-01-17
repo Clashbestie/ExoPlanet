@@ -1,5 +1,8 @@
 package planet;
 
+import position.Direction;
+import position.Position;
+
 import java.util.HashMap;
 
 public interface ServerCommandsListener
@@ -8,21 +11,21 @@ public interface ServerCommandsListener
 
     void s2cLanded(Ground ground, double temp);
 
-    void s2cScanned(HashMap data);
+    void s2cScanned(Ground ground, double temp);
 
-    void s2cMoved(HashMap data);
+    void s2cMoved(Position position);
 
-    void s2cRotated(HashMap data);
+    void s2cRotated(Direction direction);
 
-    void s2cCrashed(HashMap data);
+    void s2cCrashed();
 
-    void s2cError(HashMap data);
+    void s2cError(String text);
 
-    void s2cPos(HashMap data);
+    void s2cPos(Position position);
 
-    void s2cCharged(HashMap data);
+    void s2cCharged(double temp, int energy, String text);
 
-    void s2cStatus(HashMap data);
+    void s2cStatus(double temp, int energy, String text);
 
 }
 
