@@ -48,4 +48,29 @@ public class Position
     {
         this.direction = direction;
     }
+
+    private Position(Position position){
+        this.x = position.x;
+        this.y = position.y;
+        this.direction = position.direction;
+    }
+
+    public Position facing(){
+        Position position = new Position(this);
+        switch (direction){
+            case NORTH:
+                position.setX(position.getX()-1);
+                break;
+            case EAST:
+                position.setY(position.getY()+1);
+                break;
+            case SOUTH:
+                position.setX(position.getX()+1);
+                break;
+            case WEST:
+                position.setY(position.getY()-1);
+                break;
+        }
+        return position;
+    }
 }

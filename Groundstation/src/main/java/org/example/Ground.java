@@ -1,4 +1,4 @@
-package planet;
+package org.example;
 
 import java.lang.reflect.Field;
 
@@ -11,8 +11,7 @@ public enum Ground
     WATER("WASSER"),
     PLANT("PFLANZEN"),
     MORASS("MORAST"),
-    LAVA(""),
-    OOB("");
+    LAVA("");
 
     Ground(String name)
     {

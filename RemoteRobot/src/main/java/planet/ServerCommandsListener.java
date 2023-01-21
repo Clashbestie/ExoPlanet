@@ -7,9 +7,9 @@ public interface ServerCommandsListener
 {
     void s2cInit(int width, int height);
 
-    void s2cLanded(Ground ground, double temp);
+    void s2cLanded(Measure measure);
 
-    void s2cScanned(Ground ground, double temp);
+    void s2cScanned(Measure measure);
 
     void s2cMoved(Position position);
 

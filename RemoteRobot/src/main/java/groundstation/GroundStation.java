@@ -1,6 +1,7 @@
 package groundstation;
 
-import planet.Exoplanet;
+import planet.Ground;
+import planet.Measure;
 import position.Position;
 
 import java.io.*;
@@ -29,13 +30,24 @@ public class GroundStation implements Runnable
     @Override
     public void run()
     {
-
+        //TODO wait for Groundstation commands
     }
 
-    public void sendPos(Position position)
+    public void sendPos(String name, Position position, int energy, double temp, String status)
     {
-        write("{\"CMD\":\"updateposition\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}}");
+        write("{\"CMD\":\"updateposition\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}," +
+                "\"NAME\":\"" + name +"\"," +
+                "\"ENERGY\":\"" + energy +"\"," +
+                "\"TEMP\":\"" + temp +"\"," +
+                "\"STATUS\":\"" + status +"\"}");
     }
+
+    public void sendData(Position position, Measure measure){
+        write("{\"CMD\":\"updatedata\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}," +
+                "\"GROUND\":\"" + measure.ground +"\"," +
+                "\"TEMP\":\"" + measure.temp +"\"}");
+    }
+
 
     public void sendDestroy()
     {

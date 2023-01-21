@@ -1,6 +1,7 @@
 import groundstation.GroundStation;
 import planet.Exoplanet;
 import planet.Ground;
+import planet.Measure;
 import planet.ServerCommandsListener;
 import position.Direction;
 import position.Position;
@@ -12,23 +13,35 @@ import java.util.HashMap;
 public class RemoteRobot implements ServerCommandsListener
 {
 
-    private Thread autoScout;
-    private Exoplanet exoplanet = new Exoplanet();
+    private static RemoteRobot INSTANCE;
+    public static RemoteRobot INSTANCE(){
+        return INSTANCE;
+    }
 
-    private GroundStation groundStation;
+    private AutoScout autoScout = new AutoScout();
+    private Exoplanet exoplanet = new Exoplanet();
+    private GroundStation groundStation = new GroundStation();
+    private String name;
     private Position position;
-    private double temp;
-    private double energy;
+
+    //TODO check if allows write
+    public Position getPosition(){
+        return position;
+    }
+
+    private double temp = -1;
+    private int energy = -1;
+
+    private String status = "GOOD";
     private HashMap<String, Position> robots;
 
     private RemoteRobot()
     {
+        INSTANCE = this;
         exoplanet.addListener(this);
         String command;
         while (true)
         {
-
-
             try
             {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -37,6 +50,7 @@ public class RemoteRobot implements ServerCommandsListener
                 else if (command.startsWith("orbit:") && command.length() > 6)
                 {
                     exoplanet.c2sOrbit(command.split(":")[1]);
+                    this.name = command.split(":")[1];
                 }
                 else if (command.startsWith("land:POSITION|") && command.length() > 19)
                 {
@@ -47,7 +61,9 @@ public class RemoteRobot implements ServerCommandsListener
                         int x = Integer.parseInt(data[1]);
                         int y = Integer.parseInt(data[2]);
                         Direction dir = Direction.valueOf(data[3]);
-                        exoplanet.c2sLand(new Position(x, y, dir));
+                        Position position = new Position(x,y,dir);
+                        exoplanet.c2sLand(position);
+                        this.position = position;
                     }
                 }
                 else if (command.equals("scan"))
@@ -83,6 +99,10 @@ public class RemoteRobot implements ServerCommandsListener
                         exoplanet.c2sCharge(duration);
                     }
                 }
+                else if (command.equals("autoscout"))
+                {
+                    autoScout.Start();
+                }
                 else
                 {
                     System.out.println("Unknown command or Invalid syntax.");
@@ -102,25 +122,30 @@ public class RemoteRobot implements ServerCommandsListener
     @Override
     public void s2cInit(int width, int height)
     {
-        System.out.println(width + "|" + height);
+        groundStation.sendData(new Position(0, -1, Direction.EAST), new Measure(Ground.NOTHING, width));
+        groundStation.sendData(new Position(-1, 0, Direction.EAST), new Measure(Ground.NOTHING, height));
     }
 
     @Override
-    public void s2cLanded(Ground ground, double temp)
+    public void s2cLanded(Measure measure)
     {
-        System.out.println(ground + "|" + temp);
+        groundStation.sendPos(name, position, energy, temp, status);
+        groundStation.sendData(position, measure);
+        exoplanet.addData(position, measure);
     }
 
     @Override
-    public void s2cScanned(Ground ground, double temp)
+    public void s2cScanned(Measure measure)
     {
-        System.out.println(ground + "|" + temp);
+        groundStation.sendData(position.facing(), measure);
+        exoplanet.addData(position.facing(), measure);
     }
 
     @Override
     public void s2cMoved(Position position)
     {
         this.position = position;
+        groundStation.sendPos(name, position, energy, temp, status);
     }
 
     @Override
@@ -132,7 +157,7 @@ public class RemoteRobot implements ServerCommandsListener
     @Override
     public void s2cCrashed()
     {
-
+        groundStation.sendDestroy();
     }
 
     @Override
@@ -144,18 +169,20 @@ public class RemoteRobot implements ServerCommandsListener
     @Override
     public void s2cPos(Position position)
     {
-
+        this.position = position;
     }
 
     @Override
     public void s2cCharged(double temp, int energy, String text)
     {
-
+        this.energy = energy;
+        this.temp = temp;
     }
 
     @Override
     public void s2cStatus(double temp, int energy, String text)
     {
-
+        this.energy = energy;
+        this.temp = temp;
     }
 }

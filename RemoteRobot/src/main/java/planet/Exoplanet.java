@@ -14,6 +14,14 @@ import java.util.HashMap;
 public class Exoplanet implements Runnable
 {
 
+    private static Exoplanet INSTANCE;
+    public static Exoplanet INSTANCE(){
+        return INSTANCE;
+    }
+
+    private HashMap<Position, Measure> data = new HashMap<>();
+
+    private int height, width;
     private Gson gson;
     private BufferedWriter writer;
     private BufferedReader reader;
@@ -21,6 +29,7 @@ public class Exoplanet implements Runnable
 
     public Exoplanet()
     {
+        INSTANCE = this;
         GsonBuilder builder = new GsonBuilder();
 
         gson = builder.create();
@@ -35,6 +44,15 @@ public class Exoplanet implements Runnable
         {
             throw new RuntimeException(e);
         }
+    }
+
+    public void addData(Position position, Measure measure){
+        data.put(position, measure);
+    }
+
+    public Measure getData(Position position){
+        if(position.getX() < 0 || position.getX() >= height || position.getY() < 0 || position.getY() >= width) return new Measure(Ground.OOB, 0);
+        return data.containsKey(position)? data.get(position): new Measure(Ground.NOTHING, -999.9);
     }
 
     public void c2sOrbit(String name)
@@ -109,25 +127,31 @@ public class Exoplanet implements Runnable
                     case INIT:
                         int width = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("WIDTH")).intValue();
                         int height = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("HEIGHT")).intValue();
+                        this.width = width;
+                        this.height = height;
                         for (ServerCommandsListener listener : listeners)
                         {
                             listener.s2cInit(width, height);
                         }
                         break;
                     case LANDED:
-                        Ground ground = Ground.valueOf(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("GROUND").toString());
+                        LinkedTreeMap<?, ?> _measure = ((LinkedTreeMap<?, ?>) data.get("MEASURE"));
+                        Ground ground = Ground.valueOf(_measure.get("GROUND").toString());
                         double temp = Double.parseDouble(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP").toString());
+                        Measure measure = new Measure(ground, temp);
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cLanded(ground, temp);
+                            listener.s2cLanded(measure);
                         }
                         break;
                     case SCANED:
-                        ground = Ground.valueOf(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("GROUND").toString());
-                        temp = Double.parseDouble((String) ((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP"));
+                        _measure = ((LinkedTreeMap<?, ?>) data.get("MEASURE"));
+                        ground = Ground.valueOf(_measure.get("GROUND").toString());
+                        temp = Double.parseDouble(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP").toString());
+                        measure = new Measure(ground, temp);
                         for (ServerCommandsListener listener : listeners)
                         {
-                            listener.s2cScanned(ground, temp);
+                            listener.s2cScanned(measure);
                         }
                         break;
                     case MOVED:

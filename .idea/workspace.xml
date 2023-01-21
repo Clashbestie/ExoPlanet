@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7030390d-d3dc-4fa1-a176-7d9c847fc0cc" name="Changes" comment="Code I guess">
-      <change afterPath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/position/Direction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/position/Position.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/Ground.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/AutoScout.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Measure.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Groundstation/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Groundstation/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/Groundstation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/Groundstation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/Groundstation/src/main/java/org/example/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/RemoteRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/RemoteRobot.java" afterDir="false" />
@@ -15,6 +17,7 @@
       <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Exoplanet.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Exoplanet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Ground.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/Ground.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandsListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/planet/ServerCommandsListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RemoteRobot/src/main/java/position/Position.java" beforeDir="false" afterPath="$PROJECT_DIR$/RemoteRobot/src/main/java/position/Position.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,9 +86,10 @@
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
     "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "jdk.selected.JAVA_MODULE": "temurin-1.8",
-    "last_opened_file_path": "U:/School/ExoPlanet/Groundstation/src/main/java/org/example",
+    "last_opened_file_path": "C:/Users/sebastian.messmer/Desktop/School/ExoPlanet/RemoteRobot/src/main/java/plsdelete",
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.39425287",
@@ -94,11 +98,17 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\sebastian.messmer\Desktop\School\ExoPlanet\RemoteRobot\src\main\java\plsdelete" />
       <recent name="U:\School\ExoPlanet\Groundstation\src\main\java\org\example" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sebastian.messmer\Desktop\School\ExoPlanet\RemoteRobot\src\main\java\plsdelete" />
+      <recent name="C:\Users\sebastian.messmer\Desktop\School\ExoPlanet\Groundstation\src\main\java\plsdelete" />
       <recent name="C:\Users\sebastian.messmer\Desktop\School\ExoPlanet\libs" />
       <recent name="U:\School\ExoPlanet\RemoteRobot\src\main\java" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example" />
     </key>
   </component>
   <component name="RunManager">
@@ -147,6 +157,9 @@
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="java:com.google.protobuf:protobuf-java" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
