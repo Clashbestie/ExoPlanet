@@ -1,7 +1,7 @@
-package planet;
+package main.planet;
 
-import position.Direction;
-import position.Position;
+import main.position.Direction;
+import main.position.Position;
 
 public interface ServerCommandsListener
 {

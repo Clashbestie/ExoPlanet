@@ -1,4 +1,4 @@
-package planet;
+package main.planet;
 
 import java.lang.reflect.Field;
 

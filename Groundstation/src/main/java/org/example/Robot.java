@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Robot implements Runnable
 {
 
-    private Gson gson = new Gson();
+    private static Gson gson = new Gson();
     private Socket socket;
     private int id;
     public int getID(){
@@ -22,6 +22,11 @@ public class Robot implements Runnable
     private BufferedReader reader;
 
     private boolean insert = true;
+
+    private Position position;
+    public Position getPosition(){
+        return position;
+    }
 
     public Robot(Socket socket, int id)
     {
@@ -50,6 +55,9 @@ public class Robot implements Runnable
                 HashMap<?, ?> data = gson.fromJson(message, HashMap.class);
                 switch (data.get("CMD").toString())
                 {
+                    case "getpositions":
+                        Groundstation.getGroundstation().sendPositions(this);
+                        break;
                     case "updateposition":
                         LinkedTreeMap<?, ?> _position = (LinkedTreeMap<?, ?>) data.get("POSITION");
                         int x = ((Double) _position.get("X")).intValue();
@@ -60,6 +68,7 @@ public class Robot implements Runnable
                         double temp = Double.parseDouble(data.get("TEMP").toString());
                         String status = data.get("STATUS").toString();
                         String name = data.get("NAME").toString();
+                        this.position = position;
                         Groundstation.getGroundstation().sendRobotPosition(id, name, position, energy, temp, status, insert);
                         insert = false;
                         break;
@@ -90,6 +99,18 @@ public class Robot implements Runnable
         try
         {
             writer.write("{\"CMD\":\"updateposition\",\"ID\":\"" + id + "\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}}");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendData(Position position, Ground ground, double temp){
+        try
+        {
+            writer.write("{\"CMD\":\"updatedata\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}," +
+                    "\"GROUND\":\"" + ground +"\"," +
+                    "\"TEMP\":\"" + temp +"\"}");
         } catch (IOException e)
         {
             e.printStackTrace();

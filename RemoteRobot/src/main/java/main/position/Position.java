@@ -1,6 +1,7 @@
-package position;
+package main.position;
 
 import com.google.gson.annotations.SerializedName;
+import main.aStar.Tile;
 
 
 public class Position
@@ -55,20 +56,24 @@ public class Position
         this.direction = position.direction;
     }
 
+    public Coordinate getCoordinate(){
+        return new Coordinate(x,y);
+    }
+
     public Position facing(){
         Position position = new Position(this);
         switch (direction){
             case NORTH:
-                position.setX(position.getX()-1);
+                position.setY(position.getY()-1);
                 break;
             case EAST:
-                position.setY(position.getY()+1);
-                break;
-            case SOUTH:
                 position.setX(position.getX()+1);
                 break;
+            case SOUTH:
+                position.setY(position.getY()+1);
+                break;
             case WEST:
-                position.setY(position.getY()-1);
+                position.setX(position.getX()-1);
                 break;
         }
         return position;

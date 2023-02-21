@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.position.Direction;
 import org.example.position.Position;
 
 import java.io.IOException;
@@ -52,6 +53,13 @@ public class Groundstation
         }
     }
 
+    public void sendPositions(Robot robot){
+        for (Robot _robot : robots)
+        {
+            robot.sendRobotPosition(_robot.getID(),_robot.getPosition());
+        }
+    }
+
     public void sendRobotPosition(int id, String name, Position position, int energy, double temp, String status, boolean insert)
     {
         try {
@@ -93,6 +101,10 @@ public class Groundstation
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        for (Robot robot : robots)
+        {
+            robot.sendData(position, ground, temp);
+        }
     }
 
     public void destroy(int id){
@@ -103,6 +115,10 @@ public class Groundstation
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        for (Robot robot : robots)
+        {
+            robot.sendRobotPosition(id, new Position(-1,-1, Direction.NORTH));
         }
     }
 

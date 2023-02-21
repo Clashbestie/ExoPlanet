@@ -1,4 +1,4 @@
-package position;
+package main.position;
 
 public enum Direction
 {

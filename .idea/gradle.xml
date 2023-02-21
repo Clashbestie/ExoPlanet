@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Groundstation" />
+            <option value="$PROJECT_DIR$/RemoteControl" />
             <option value="$PROJECT_DIR$/RemoteRobot" />
           </set>
         </option>

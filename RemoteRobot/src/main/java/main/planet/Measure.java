@@ -1,4 +1,4 @@
-package planet;
+package main.planet;
 
 public class Measure {
     public final double temp;

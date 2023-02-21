@@ -1,10 +1,12 @@
-package planet;
+package main.planet;
 
+import main.aStar.Tile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
-import position.Direction;
-import position.Position;
+import main.position.Coordinate;
+import main.position.Direction;
+import main.position.Position;
 
 import java.io.*;
 import java.net.Socket;
@@ -13,23 +15,18 @@ import java.util.HashMap;
 
 public class Exoplanet implements Runnable
 {
+    private static Gson gson;
 
-    private static Exoplanet INSTANCE;
-    public static Exoplanet INSTANCE(){
-        return INSTANCE;
-    }
-
-    private HashMap<Position, Measure> data = new HashMap<>();
-
+    private HashMap<Coordinate, Tile> data = new HashMap<>();
     private int height, width;
-    private Gson gson;
+    public int getHeight(){return height;}
+    public  int getWidth(){ return width;}
     private BufferedWriter writer;
     private BufferedReader reader;
     private ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
 
     public Exoplanet()
     {
-        INSTANCE = this;
         GsonBuilder builder = new GsonBuilder();
 
         gson = builder.create();
@@ -46,13 +43,17 @@ public class Exoplanet implements Runnable
         }
     }
 
-    public void addData(Position position, Measure measure){
-        data.put(position, measure);
+    public void addData(Coordinate coordinate, Measure measure){
+        data.put(coordinate, new Tile(coordinate, measure));
     }
 
-    public Measure getData(Position position){
-        if(position.getX() < 0 || position.getX() >= height || position.getY() < 0 || position.getY() >= width) return new Measure(Ground.OOB, 0);
-        return data.containsKey(position)? data.get(position): new Measure(Ground.NOTHING, -999.9);
+    public Measure getData(Coordinate coordinate){
+        if(coordinate.X() < 0 || coordinate.X() >= height || coordinate.Y() < 0 || coordinate.Y() >= width) return new Measure(Ground.OOB, 0);
+        return data.containsKey(coordinate)? data.get(coordinate).getMeasure(): new Measure(Ground.NOTHING, -999.9);
+    }
+
+    public Tile getTile(Coordinate coordinate){
+        return new Tile(coordinate, getData(coordinate));
     }
 
     public void c2sOrbit(String name)
