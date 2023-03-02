@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ExoPlanet.Groundstation.main:jar">
+    <output-path>$PROJECT_DIR$/build/artifacts/ExoPlanet_Groundstation_main_jar</output-path>
+    <root id="archive" name="ExoPlanet.Groundstation.main.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/manifests/Groundstation/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="ExoPlanet.Groundstation.main" />
+      <element id="module-output" name="ExoPlanet.RemoteRobot.main" />
+      <element id="module-output" name="ExoPlanet.General.main" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/3.19.4/748e4e0b9e4fa6b9b1fe65690aa04a9db56cfc4d/protobuf-java-3.19.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mysql/mysql-connector-j/8.0.31/3fd5850719d7e82d50705d34cc6a0037fab5731f/mysql-connector-j-8.0.31.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

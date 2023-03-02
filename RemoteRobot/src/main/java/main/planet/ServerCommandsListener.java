@@ -1,10 +1,12 @@
 package main.planet;
 
-import main.position.Direction;
-import main.position.Position;
 
-public interface ServerCommandsListener
-{
+import planet.Measure;
+import position.Direction;
+import position.Position;
+
+public interface ServerCommandsListener {
+
     void s2cInit(int width, int height);
 
     void s2cLanded(Measure measure);

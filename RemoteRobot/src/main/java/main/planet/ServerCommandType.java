@@ -1,7 +1,6 @@
 package main.planet;
 
-public enum ServerCommandType
-{
+public enum ServerCommandType {
     UNKNOWN,
     INIT,
     LANDED,

@@ -3,6 +3,7 @@ package main.aStar;
 import java.util.StringJoiner;
 
 class RouteTile implements Comparable<RouteTile> {
+
     private final Tile current;
     private Tile previous;
     private double routeScore;
@@ -27,20 +28,20 @@ class RouteTile implements Comparable<RouteTile> {
         return previous;
     }
 
-    double getRouteScore() {
-        return routeScore;
-    }
-
-    double getEstimatedScore() {
-        return estimatedScore;
-    }
-
     void setPrevious(Tile previous) {
         this.previous = previous;
     }
 
+    double getRouteScore() {
+        return routeScore;
+    }
+
     void setRouteScore(double routeScore) {
         this.routeScore = routeScore;
+    }
+
+    double getEstimatedScore() {
+        return estimatedScore;
     }
 
     void setEstimatedScore(double estimatedScore) {
@@ -49,13 +50,7 @@ class RouteTile implements Comparable<RouteTile> {
 
     @Override
     public int compareTo(RouteTile other) {
-        if (this.estimatedScore > other.estimatedScore) {
-            return 1;
-        } else if (this.estimatedScore < other.estimatedScore) {
-            return -1;
-        } else {
-            return 0;
-        }
+        return Double.compare(this.estimatedScore, other.estimatedScore);
     }
 
     @Override

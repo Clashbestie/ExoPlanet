@@ -1,19 +1,20 @@
-package main.position;
+package position;
 
 public class Coordinate {
-    private int x;
-    private int y;
 
-    public Coordinate(int x, int y){
+    private final int x;
+    private final int y;
+
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public int X(){
+    public int X() {
         return x;
     }
 
-    public int Y(){
+    public int Y() {
         return y;
     }
 
@@ -29,11 +30,7 @@ public class Coordinate {
 
         final Coordinate other = (Coordinate) obj;
 
-        if (this.x != other.x || this.y != other.y) {
-            return false;
-        }
-
-        return true;
+        return this.x == other.x && this.y == other.y;
     }
 
     @Override

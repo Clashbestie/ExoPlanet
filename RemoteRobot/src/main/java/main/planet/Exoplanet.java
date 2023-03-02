@@ -1,137 +1,165 @@
 package main.planet;
 
-import main.aStar.Tile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
-import main.position.Coordinate;
-import main.position.Direction;
-import main.position.Position;
+import main.Args;
+import main.AutoScout;
+import main.RemoteRobot;
+import main.ResettableCountDownLatch;
+import main.aStar.Tile;
+import main.groundstation.GroundStation;
+import planet.Ground;
+import planet.Measure;
+import position.Coordinate;
+import position.Direction;
+import position.Position;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
-public class Exoplanet implements Runnable
-{
-    private static Gson gson;
+public class Exoplanet implements Runnable {
 
-    private HashMap<Coordinate, Tile> data = new HashMap<>();
-    private int height, width;
-    public int getHeight(){return height;}
-    public  int getWidth(){ return width;}
-    private BufferedWriter writer;
-    private BufferedReader reader;
-    private ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
+    private static final Gson gson;
 
-    public Exoplanet()
-    {
+    private static final HashMap<Coordinate, Tile> data = new HashMap<>();
+    private static int height, width;
+
+    public static int getHeight() {
+        return height;
+    }
+
+    public static int getWidth() {
+        return width;
+    }
+
+    private static final BufferedWriter writer;
+    private static final BufferedReader reader;
+    private static final ArrayList<ServerCommandsListener> listeners = new ArrayList<>();
+    private static final ResettableCountDownLatch latch = new ResettableCountDownLatch(1);
+
+    public static boolean await(int timeout) {
+        try {
+            latch.await(timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            latch.reset();
+            return false;
+        }
+        latch.reset();
+        return true;
+    }
+
+    public static void await() {
+        await(5000);
+    }
+
+    static {
         GsonBuilder builder = new GsonBuilder();
-
         gson = builder.create();
 
-        try
-        {
+        try {
             Socket socket = new Socket("localhost", 8150);
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            new Thread(this).start();
-        } catch (IOException e)
-        {
+            new Thread(new Exoplanet()).start();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void addData(Coordinate coordinate, Measure measure){
+    public static Coordinate getSaveCoordinate(){
+        for (Tile tile: data.values()) {
+            Measure measure = tile.getMeasure();
+            if(!GroundStation.isOccupied(tile.getCoordinate()) && AutoScout.neutralTargets.contains(measure.ground) && (measure.temp > Args.normalMinTemp && measure.temp < Args.normalMaxTemp)) return  tile.getCoordinate();
+        }
+        return null;
+    }
+
+    public static void addData(Coordinate coordinate, Measure measure) {
         data.put(coordinate, new Tile(coordinate, measure));
     }
 
-    public Measure getData(Coordinate coordinate){
-        if(coordinate.X() < 0 || coordinate.X() >= height || coordinate.Y() < 0 || coordinate.Y() >= width) return new Measure(Ground.OOB, 0);
-        return data.containsKey(coordinate)? data.get(coordinate).getMeasure(): new Measure(Ground.NOTHING, -999.9);
+    public static Measure getData(Coordinate coordinate) {
+        if (OOB(coordinate)) return new Measure(Ground.OOB, 0);
+        return data.containsKey(coordinate) ? data.get(coordinate).getMeasure() : new Measure(Ground.NOTHING, -999.9);
     }
 
-    public Tile getTile(Coordinate coordinate){
+    private static boolean OOB(Coordinate coordinate) {
+        return (coordinate.X() < 0 || coordinate.X() >= width || coordinate.Y() < 0 || coordinate.Y() >= height);
+    }
+
+    public static Tile getTile(Coordinate coordinate) {
         return new Tile(coordinate, getData(coordinate));
     }
 
-    public void c2sOrbit(String name)
-    {
+    public static void c2sOrbit(String name) {
         write("{\"CMD\":\"orbit\",\"NAME\":\"" + name + "\"}");
     }
 
-    public void c2sLand(Position position)
-    {
+    public static boolean c2sLand(Position position) {
+        if (GroundStation.isOccupied(position.getCoordinate()) || OOB(position.getCoordinate())) return false;
         write("{\"CMD\":\"land\", \"POSITION\":{\"X\":" + position.getX() + ",\"Y\":" + position.getY() + ",\"DIRECTION\":\"" + position.getDir() + "\"}}");
+        return true;
     }
 
-    public void c2sScan()
-    {
+    public static void c2sScan() {
         write("{\"CMD\":\"scan\"}");
     }
 
-    public void c2sMove()
-    {
+    public static boolean c2sMove() {
+        if (GroundStation.isOccupied(RemoteRobot.getPosition().facing().getCoordinate())) return false;
         write("{\"CMD\":\"move\"}");
+        return true;
     }
 
-    public void c2sRotate(boolean right)
-    {
+    public static void c2sRotate(boolean right) {
         write("{\"CMD\":\"rotate\",\"ROTATION\":\"" + (right ? "RIGHT" : "LEFT") + "\"}");
     }
 
-    public void c2sExit()
-    {
+    public static void c2sExit() {
         write("{\"CMD\":\"exit\"}");
     }
 
-    public void c2sGetPos()
-    {
+    public static void c2sGetPos() {
         write("{\"CMD\":\"getpos\"}");
     }
 
-    public void c2sCharge(int duration)
-    {
-        write("{\"CMD\":\"charge\",\"DURATION\":\"" + duration + "\"}");
+    public static void c2sCharge(int duration) {
+        write("{\"CMD\":\"charge\",\"DURATION\":" + duration + "}");
     }
 
-    private void write(String data)
-    {
-        try
-        {
+    private static void write(String data) {
+        try {
             System.out.println("Write-> " + data);
             writer.write(data);
             writer.newLine();
             writer.flush();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             String command;
-            while (true)
-            {
+            boolean status;
+            while (true) {
                 command = reader.readLine();
                 if (command != null) System.out.println("Read-> " + command);
 
                 HashMap<?, ?> data = gson.fromJson(command, HashMap.class);
-
-                switch (getType(data))
-                {
+                status = false;
+                switch (getType(data)) {
                     case INIT:
                         int width = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("WIDTH")).intValue();
                         int height = ((Double) ((LinkedTreeMap<?, ?>) data.get("SIZE")).get("HEIGHT")).intValue();
-                        this.width = width;
-                        this.height = height;
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        Exoplanet.width = width;
+                        Exoplanet.height = height;
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cInit(width, height);
                         }
                         break;
@@ -140,8 +168,7 @@ public class Exoplanet implements Runnable
                         Ground ground = Ground.valueOf(_measure.get("GROUND").toString());
                         double temp = Double.parseDouble(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP").toString());
                         Measure measure = new Measure(ground, temp);
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cLanded(measure);
                         }
                         break;
@@ -150,8 +177,7 @@ public class Exoplanet implements Runnable
                         ground = Ground.valueOf(_measure.get("GROUND").toString());
                         temp = Double.parseDouble(((LinkedTreeMap<?, ?>) data.get("MEASURE")).get("TEMP").toString());
                         measure = new Measure(ground, temp);
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cScanned(measure);
                         }
                         break;
@@ -161,28 +187,24 @@ public class Exoplanet implements Runnable
                         int y = ((Double) _position.get("Y")).intValue();
                         Direction direction = Direction.valueOf(_position.get("DIRECTION").toString());
                         Position position = new Position(x, y, direction);
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cMoved(position);
                         }
                         break;
                     case ROTATED:
                         direction = Direction.valueOf(data.get("DIRECTION").toString());
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cRotated(direction);
                         }
                         break;
                     case CRASHED:
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cCrashed();
                         }
                         break;
                     case ERROR:
                         String text = data.get("ERROR").toString();
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cError(text);
                         }
                         break;
@@ -192,56 +214,50 @@ public class Exoplanet implements Runnable
                         y = ((Double) _position.get("Y")).intValue();
                         direction = Direction.valueOf(_position.get("DIRECTION").toString());
                         position = new Position(x, y, direction);
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cPos(position);
                         }
                         break;
                     case CHARGED:
                         LinkedTreeMap<?, ?> _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
-                        temp = Double.parseDouble((String) _status.get("TEMP"));
+                        temp = Double.parseDouble(_status.get("TEMP").toString());
                         int energy = ((Double) _status.get("ENERGY")).intValue();
                         text = _status.get("MESSAGE").toString();
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cCharged(temp, energy, text);
                         }
                         break;
                     case STATUS:
+                        status = true;
                         _status = (LinkedTreeMap<?, ?>) data.get("STATUS");
-                        temp = Double.parseDouble((String) _status.get("TEMP"));
+                        temp = Double.parseDouble(_status.get("TEMP").toString());
                         energy = ((Double) _status.get("ENERGY")).intValue();
                         text = _status.get("MESSAGE").toString();
-                        for (ServerCommandsListener listener : listeners)
-                        {
+                        for (ServerCommandsListener listener : listeners) {
                             listener.s2cStatus(temp, energy, text);
                         }
                         break;
                     case UNKNOWN:
                         break;
                 }
+                if(!status) latch.countDown();
             }
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private ServerCommandType getType(HashMap<?, ?> data)
-    {
+    private ServerCommandType getType(HashMap<?, ?> data) {
         if (data == null || !data.containsKey("CMD")) return ServerCommandType.UNKNOWN;
-        try
-        {
+        try {
             return ServerCommandType.valueOf(((String) data.get("CMD")).toUpperCase());
-        } catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ServerCommandType.UNKNOWN;
         }
     }
 
-    public void addListener(ServerCommandsListener listener)
-    {
+    public static void addListener(ServerCommandsListener listener) {
         listeners.add(listener);
     }
 }

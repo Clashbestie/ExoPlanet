@@ -12,7 +12,7 @@ build/
 *.iws
 *.iml
 *.ipr
-out/
+manifests/
 !**/src/main/**/out/
 !**/src/test/**/out/
 

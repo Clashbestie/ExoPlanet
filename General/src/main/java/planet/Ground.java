@@ -1,9 +1,8 @@
-package org.example;
+package planet;
 
 import java.lang.reflect.Field;
 
-public enum Ground
-{
+public enum Ground {
     NOTHING("NICHTS"),
     SAND(""),
     GRAVEL("GEROELL"),
@@ -11,20 +10,18 @@ public enum Ground
     WATER("WASSER"),
     PLANT("PFLANZEN"),
     MORASS("MORAST"),
-    LAVA("");
+    LAVA(""),
+    OOB("");
 
-    Ground(String name)
-    {
+    Ground(String name) {
         if (name.isEmpty()) return;
         //Overriding name to keep #valueOf working
-        try
-        {
+        try {
             Field fieldName = getClass().getSuperclass().getDeclaredField("name");
             fieldName.setAccessible(true);
             fieldName.set(this, name);
             fieldName.setAccessible(false);
-        } catch (IllegalAccessException | NoSuchFieldException e)
-        {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             if (e.getClass().equals(NoSuchFieldException.class))
                 System.out.println("MOM! Phineas and Ferb are messing with my ENUMS again!");
             else System.out.println("PLS GIVE REFLECTION.");

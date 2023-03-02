@@ -1,5 +1,5 @@
 rootProject.name = 'ExoPlanet'
 include 'RemoteRobot'
 include 'Groundstation'
-include 'RemoteControl'
+include 'General'
 
